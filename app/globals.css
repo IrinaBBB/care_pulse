@@ -6,9 +6,9 @@
 @layer base {
     /* Remove scrollbar */
     .remove-scrollbar::-webkit-scrollbar {
-        width: 0px;
-        height: 0px;
-        border-radius: 0px;
+        width: 0;
+        height: 0;
+        border-radius: 0;
     }
 
     .remove-scrollbar::-webkit-scrollbar-track {
@@ -17,7 +17,7 @@
 
     .remove-scrollbar::-webkit-scrollbar-thumb {
         background: transparent;
-        border-radius: 0px;
+        border-radius: 0;
     }
 
     .remove-scrollbar::-webkit-scrollbar-thumb:hover {
