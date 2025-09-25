@@ -19,7 +19,8 @@ export enum FormFieldType {
     CHECKBOX = 'checkbox',
     DATE_PICKER = 'datePicker',
     SELECT = 'select',
-    SKELETON = 'skeleton'
+    SKELETON = 'skeleton',
+    SWITCH = 'switch'
 }
 
 function PatientForm() {
@@ -40,8 +41,8 @@ function PatientForm() {
         try {
             const userData = { name, email, phone }
             const user = await createUser(userData)
-            console.log('created');
-            console.log(user);
+            console.log('created')
+            console.log(user)
             if (user) router.push(`/patients/${user.$id}/register`)
         } catch (e) {
             console.log(e)

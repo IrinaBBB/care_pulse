@@ -4,7 +4,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl } from '@/components/ui/form'
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import CustomFormField from '@/components/CustomFormField'
 import SubmitButton from '@/components/SubmitButton'
 import { useState } from 'react'
@@ -18,6 +18,7 @@ import { Doctors, GenderOptions, IdentificationTypes } from '@/constants'
 import { Label } from '@/components/ui/label'
 import { SelectItem } from '@/components/ui/select'
 import Image from 'next/image'
+import { Switch } from '@/components/ui/switch'
 
 
 function RegisterForm({ user }: { user: User }) {
@@ -189,6 +190,11 @@ function RegisterForm({ user }: { user: User }) {
                     label='Identification Number'
                     placeholder='123456789'
                 />
+                <div className='flex'>
+                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value' name='myValue' />
+                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value' name='new' />
+                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value' name='cc' />
+                </div>
                 <SubmitButton isLoading={isLoading}>
                     Get Started
                 </SubmitButton>
