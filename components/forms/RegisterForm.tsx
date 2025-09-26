@@ -4,7 +4,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import { Form, FormControl } from '@/components/ui/form'
 import CustomFormField from '@/components/CustomFormField'
 import SubmitButton from '@/components/SubmitButton'
 import { useState } from 'react'
@@ -18,7 +18,7 @@ import { Doctors, GenderOptions, IdentificationTypes } from '@/constants'
 import { Label } from '@/components/ui/label'
 import { SelectItem } from '@/components/ui/select'
 import Image from 'next/image'
-import { Switch } from '@/components/ui/switch'
+import { FileUploader } from '@/components/FileUploader'
 
 
 function RegisterForm({ user }: { user: User }) {
@@ -156,7 +156,7 @@ function RegisterForm({ user }: { user: User }) {
                         fieldType={FormFieldType.TEXTAREA}
                         control={form.control}
                         name='familyMedicalHistory'
-                        label=' Family medical history (if relevant)'
+                        label='Family medical history (if relevant)'
                         placeholder='Mother had brain cancer, Father has hypertension'
                     />
 
@@ -191,10 +191,38 @@ function RegisterForm({ user }: { user: User }) {
                     placeholder='123456789'
                 />
                 <div className='flex'>
-                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value' name='myValue' />
-                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value' name='new' />
-                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value' name='cc' />
+                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value'
+                                     name='myValue' />
+                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='New Value'
+                                     name='new' />
+                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='My Value'
+                                     name='cc' />
                 </div>
+                <CustomFormField fieldType={FormFieldType.SKELETON} control={form.control}
+                                 name='identificationDocument' label='Scanned Copy of identification document'
+                                 renderSkeleton={(field) => (
+                                     <FormControl>
+                                         <FileUploader files={field.value} onChange={field.onChange} />
+                                     </FormControl>
+                                 )}
+                />
+                <section className='space-y-6'>
+                    <div className='mb-9 space-y-1'>
+                        <h2 className='sub-header'>
+                            Consent and privacy
+                        </h2>
+                    </div>
+                </section>
+                <CustomFormField control={form.control}
+                                 fieldType={FormFieldType.CHECKBOX} name='Treatment Consent'
+                                 label='I consent to treatment' />
+                <CustomFormField control={form.control}
+                                 fieldType={FormFieldType.CHECKBOX} name='Disclosure Consent'
+                                 label='I consent to disclosure information' />
+                <CustomFormField control={form.control}
+                                 fieldType={FormFieldType.CHECKBOX} name='Privacy Consent'
+                                 label='I consent to privacy policy' />
+
                 <SubmitButton isLoading={isLoading}>
                     Get Started
                 </SubmitButton>

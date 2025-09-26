@@ -1,11 +1,10 @@
 // noinspection TypeScriptValidateTypes
 
 import Image from 'next/image'
-import { useId } from 'react'
+import { ReactNode, useId } from 'react'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Control } from 'react-hook-form'
 import { FormFieldType } from '@/components/forms/PatientForm'
-import { ReactNode } from 'react'
 import { Input } from '@/components/ui/input'
 import PhoneInput from 'react-phone-number-input'
 import { E164Number } from 'libphonenumber-js'
@@ -16,7 +15,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { Select, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { uuid4 } from 'zod/v4/core/regexes'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 
 
 interface CustomProps {
@@ -81,10 +81,6 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     </FormControl>
                 </div>
             )
-        case FormFieldType.SKELETON:
-            return (
-                renderSkeleton ? renderSkeleton(field) : null
-            )
         case FormFieldType.SELECT:
             return (
                 <FormControl>
@@ -100,22 +96,39 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     </Select>
                 </FormControl>
             )
+        case FormFieldType.CHECKBOX:
+            return (
+                <FormControl>
+                    <div className='flex items-center gap-4'>
+                        <Checkbox
+                            id={props.name}
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                        />
+                        <label htmlFor={props.name} className='checkbox-label'>
+                            {props.label}
+                        </label>
+                    </div>
+                </FormControl>
+            )
         case FormFieldType.SWITCH:
-            const switchId = useId()
             return (
                 <div className='flex items-center'>
                     <FormControl>
                         <Switch
-                            id={switchId}
+                            id={props.name}
                             checked={field.value}
                             onCheckedChange={field.onChange}
                         />
                     </FormControl>
-                    <FormLabel className='cursor-pointer ms-2' htmlFor={switchId}>{label}</FormLabel>
+                    <FormLabel className='cursor-pointer ms-2' htmlFor={props.name}>{label}</FormLabel>
                 </div>
 
             )
-
+        case FormFieldType.SKELETON:
+            return (
+                renderSkeleton ? renderSkeleton(field) : null
+            )
     }
 }
 
