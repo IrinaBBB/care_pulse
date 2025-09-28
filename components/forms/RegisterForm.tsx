@@ -8,13 +8,13 @@ import { Form, FormControl } from '@/components/ui/form'
 import CustomFormField from '@/components/CustomFormField'
 import SubmitButton from '@/components/SubmitButton'
 import { useState } from 'react'
-import { UserFormValidation } from '@/lib/validation'
+import { PatientFormValidation } from '@/lib/validation'
 import { useRouter } from 'next/navigation'
-import { createUser } from '@/lib/actions/patient.actions'
+import { registerPatient } from '@/lib/actions/patient.actions'
 import { User } from '@/types'
 import { FormFieldType } from '@/components/forms/PatientForm'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Doctors, GenderOptions, IdentificationTypes } from '@/constants'
+import { Doctors, GenderOptions, IdentificationTypes, PatientFormDefaultValues } from '@/constants'
 import { Label } from '@/components/ui/label'
 import { SelectItem } from '@/components/ui/select'
 import Image from 'next/image'
@@ -25,25 +25,44 @@ function RegisterForm({ user }: { user: User }) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
 
-    const form = useForm<z.infer<typeof UserFormValidation>>({
-        resolver: zodResolver(UserFormValidation),
+    const form = useForm<z.infer<typeof PatientFormValidation>>({
+        resolver: zodResolver(PatientFormValidation),
         defaultValues: {
+            ...PatientFormDefaultValues,
             name: '',
             email: '',
             phone: '',
         },
     })
 
-    async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
+    async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
         setIsLoading(true)
+
+        let formData
+        if (values.identificationDocument && values.identificationDocument?.length > 0) {
+            const blobFile = new Blob([values.identificationDocument[0]], {
+                type: values.identificationDocument[0].type,
+            })
+            formData = new FormData()
+            formData.append('blobFile', blobFile)
+            formData.append('fileName', values.identificationDocument[0].name)
+        }
+
         try {
-            const userData = { name, email, phone }
-            const user = await createUser(userData)
-            console.log('created')
-            console.log(user)
-            if (user) router.push(`/patients/${user.$id}/register`)
+            const patientData = {
+                ...values,
+                userId: user.$id,
+                birthDate: new Date(values.birthDate),
+                identificationDocument: formData,
+            }
+
+            const patient = await registerPatient(patientData)
+
+            if (patient) router.push(`/patients/${user.$id}/new-appointment`)
         } catch (e) {
             console.log(e)
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -131,7 +150,7 @@ function RegisterForm({ user }: { user: User }) {
                                      placeholder='BlueCross BlueShield' />
                     <CustomFormField fieldType={FormFieldType.INPUT} control={form.control}
                                      name='insurancePolicyNumber' label='Insurance Policy Number'
-                                     placeholder='Peanuts, penicilin, pollen...' />
+                                     placeholder='89067845676' />
                 </div>
                 <div className='flex flex-col gap-6 xl:flex-row'>
                     <CustomFormField
@@ -190,14 +209,14 @@ function RegisterForm({ user }: { user: User }) {
                     label='Identification Number'
                     placeholder='123456789'
                 />
-                <div className='flex'>
-                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value'
-                                     name='myValue' />
-                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='New Value'
-                                     name='new' />
-                    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='My Value'
-                                     name='cc' />
-                </div>
+                {/*<div className='flex'>*/}
+                {/*    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='Switch Value'*/}
+                {/*                     name='myValue' />*/}
+                {/*    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='New Value'*/}
+                {/*                     name='new' />*/}
+                {/*    <CustomFormField control={form.control} fieldType={FormFieldType.SWITCH} label='My Value'*/}
+                {/*                     name='cc' />*/}
+                {/*</div>*/}
                 <CustomFormField fieldType={FormFieldType.SKELETON} control={form.control}
                                  name='identificationDocument' label='Scanned Copy of identification document'
                                  renderSkeleton={(field) => (
@@ -214,13 +233,13 @@ function RegisterForm({ user }: { user: User }) {
                     </div>
                 </section>
                 <CustomFormField control={form.control}
-                                 fieldType={FormFieldType.CHECKBOX} name='Treatment Consent'
+                                 fieldType={FormFieldType.CHECKBOX} name='treatmentConsent'
                                  label='I consent to treatment' />
                 <CustomFormField control={form.control}
-                                 fieldType={FormFieldType.CHECKBOX} name='Disclosure Consent'
+                                 fieldType={FormFieldType.CHECKBOX} name='disclosureConsent'
                                  label='I consent to disclosure information' />
                 <CustomFormField control={form.control}
-                                 fieldType={FormFieldType.CHECKBOX} name='Privacy Consent'
+                                 fieldType={FormFieldType.CHECKBOX} name='privacyConsent'
                                  label='I consent to privacy policy' />
 
                 <SubmitButton isLoading={isLoading}>

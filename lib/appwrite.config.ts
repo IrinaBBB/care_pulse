@@ -1,6 +1,7 @@
 import * as sdk from 'node-appwrite'
+import { TablesDB } from 'node-appwrite'
 
-const {
+export const {
     PROJECT_ID,
     API_KEY,
     DATABASE_ID,
@@ -20,6 +21,7 @@ client
 
 export const databases = new sdk.Databases(client)
 export const storage = new sdk.Storage(client)
+export const tablesDB = new TablesDB(client)
 export const messaging = new sdk.Messaging(client)
 export const users = new sdk.Users(client)
 
